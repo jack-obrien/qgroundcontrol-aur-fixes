@@ -37,15 +37,20 @@ CPMAddPackage(
 if(zlib_ADDED)
     target_link_libraries(QGC PRIVATE zlibstatic)
 else()
-    find_package(Qt6ZlibPrivate REQUIRED)
-    target_link_libraries(QGC PRIVATE Qt6::ZlibPrivate)
+    find_package(Qt6ZlibPrivate QUIET)
+    if(Qt6ZlibPrivate_FOUND)
+        target_link_libraries(QGC PRIVATE Qt6::ZlibPrivate)
+    else()
+        find_package(ZLIB REQUIRED)
+        target_link_libraries(QGC PRIVATE ZLIB::ZLIB)
+    endif()
 endif()
 
 #===========================================================================#
 
 CPMAddPackage(
     NAME xz-embedded
-    VERSION 2024-12-30
+    GIT_TAG "v2024-12-30"
     GITHUB_REPOSITORY tukaani-project/xz-embedded
     OPTIONS
         "BUILD_SHAPELIB_CONTRIB OFF"
